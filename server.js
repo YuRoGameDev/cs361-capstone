@@ -45,18 +45,15 @@ app.get('/games', async function (req, res) {
   await client.connect();
 
   const query = `
-  SELECT 
-    u.username,
-    g.title AS game_title,
-    ua.behavior_name,
-    COUNT(ua.id) AS activity_count,
-    SUM(ua.value) AS total_value
-  FROM steam_user_activity ua
-  JOIN users u ON ua.user_id = u.id
-  JOIN games g ON ua.game_title = g.title
-  GROUP BY u.username, g.title, ua.behavior_name
-  ORDER BY activity_count DESC
-  LIMIT 10;
+   SELECT 
+      user_id,
+      game_title,
+      behavior_name,
+      COUNT(*) AS activity_count,
+      SUM(value) AS total_value
+    FROM steam_user_activity
+    GROUP BY user_id, game_title, behavior_name
+    ORDER BY activity_count DESC;
 `;
 
   const result = await client.query(query);
