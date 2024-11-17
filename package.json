@@ -1,0 +1,13 @@
+{
+    "name": "hello_world",
+    "version": "1.0.0",
+    "scripts": {
+        "start": "node server.js"
+    },
+    "dependencies": {
+        "express": "^4.17.1",
+        "pg": "^8.13.1"
+    },
+    "author": "",
+    "license": "ISC"
+}
