@@ -8,119 +8,116 @@ const PORT = 8000;
 app.listen(PORT);
 
 
-
-// Configure your PostgreSQL client
 const clientConfig = new Client({
   user: 'postgres',
-  host: 'my-pace-postgresql.c9wo2yq84f4w.us-east-2.rds.amazonaws.com',  // Usually 'localhost' or RDS endpoint
+  host: 'my-pace-postgresql.c9wo2yq84f4w.us-east-2.rds.amazonaws.com',
   database: 'steam_games_db',
   password: 'mypacepostgresql',
-  port: 5432,  // Default port for PostgreSQL
+  port: 5432,
   connectionTimeoutMillis: 30000,
   ssl: {
     rejectUnauthorized: false,
   }
 });
 
-// client.connect()
-//   .then(() => console.log('Connected to the database!'))
-//   .catch(err => console.error('Database connection error:', err.stack));
 
-
-// Basic routes
 app.get('/hello', function (req, res) {
   res.set("Content-Type", "text/plain");
   res.send('Hello World!');
 });
 
-// Echo route (no change here)
 app.get('/echo', function (req, res) {
   const value = req.query['input'];
   res.set("Content-Type", "text/plain");
   res.send(value);
 });
 
-// Error route (no change here)
-app.get('/error', function(req, res) {
+
+app.get('/error', function (req, res) {
   res.set("Content-Type", "text/plain");
   res.status(400).send('Error, Bad Request!');
 });
 
+//GET request that reads the data
 app.get('/games', async function (req, res) {
   const client = new Client(clientConfig);
   await client.connect();
-  const result = await client.query("SELECT * FROM steam_user_activity LIMIT 10");
+  const result = await client.query("SELECT * FROM steam_user_activity");
   if (result.rowCount < 1) {
-  res.status(500).send("Internal Error - No Games Found");
+    res.status(500).send("Internal Error - No Games Found");
   } else {
-  res.set("Content-Type", "application/json");
-  res.send(result.rows);
+    res.set("Content-Type", "application/json");
+    res.send(result.rows);
   }
   await client.end();
-  });
+});
+
+//POST request that inserts the data
+app.post('/add-game', async function (req, res) {
+  const { user_id, game_name, behavior, value } = req.body;
+  const client = new Client(clientConfig);
+
+  try {
+    await client.connect();
+    const query = await client.query(
+      'INSERT INTO steam_user_activity (user_id, game_name, behavior, value) VALUES ($1, $2, $3, $4) RETURNING *',
+      [user_id, game_name, behavior, value]
+    );
+    res.send(query.rows[0]);
+
+  } catch (error) {
+    res.status(500).json({ error: "Failed to insert", details: error.message });
+  }
+
+});
+
+//PUT request that updates a users activity by putting in their id first, and then the data to update.
+app.put('/update-game', async function (req, res) {
+  const { id, user_id, game_name, behavior, value } = req.body; 
+  const client = new Client(clientConfig);
+
+  try {
+    await client.connect();
+
+    const query = await client.query(
+      `UPDATE steam_user_activity
+       SET user_id = $1, game_name = $2, behavior = $3, value = $4
+       WHERE id = $5
+       RETURNING *`,
+      [user_id, game_name, behavior, value, id]
+    );
+
+    if (query.rowCount === 0) {
+      res.status(404).send("No record found to update");
+    } else {
+      res.send(query.rows[0]); // Send the updated record as JSON
+    }
+  } catch (error) {
+    res.status(500).json({ error: "Failed to update record", details: error.message });
+  } 
+});
+
+//DELETE request that deletes an ID
+app.delete('/delete-game/:id', async function (req, res) {
+  const { id } = req.params; 
+  const client = new Client(clientConfig);
+
+  try {
+    await client.connect();
+
+    const query = await client.query(
+      'DELETE FROM steam_user_activity WHERE id = $1 RETURNING *', [id]
+    );
 
 
-// GET route to fetch all records from the steam_user_activity table
-// app.get('/games', async function (req, res)  {
-//   try {
-//       const result = await client.query('SELECT * FROM steam_user_activity'); // Query to fetch all steam_user_activity records
-//       res.json(result.rows); // Send data as JSON response
-//   } catch (err) {
-//       console.error(err);
-//       res.status(500).send('Server Error');
-//   }
-// });
-
-// POST route to add a new record to the steam_user_activity table
-// app.post('/games', async (req, res) => {
-//   const { user_id, game_name, behavior, value } = req.body;
-//   try {
-//       const result = await client.query(
-//           'INSERT INTO steam_user_activity (user_id, game_name, behavior, value) VALUES ($1, $2, $3, $4) RETURNING *',
-//           [user_id, game_name, behavior, value]
-//       );
-//       res.json(result.rows[0]); // Return the inserted data
-//   } catch (err) {
-//       console.error(err);
-//       res.status(500).send('Server Error');
-//   }
-// });
-
-// // PUT route to update a specific record in the steam_user_activity table
-// app.put('/games/:id', async (req, res) => {
-//   const { id } = req.params;
-//   const { behavior, value } = req.body;
-//   try {
-//       const result = await client.query(
-//           'UPDATE steam_user_activity SET behavior = $1, value = $2 WHERE user_id = $3 RETURNING *',
-//           [behavior, value, id]
-//       );
-//       if (result.rows.length === 0) {
-//           return res.status(404).send('Game not found');
-//       }
-//       res.json(result.rows[0]); // Return the updated data
-//   } catch (err) {
-//       console.error(err);
-//       res.status(500).send('Server Error');
-//   }
-// });
-
-// // DELETE route to remove a specific record from the steam_user_activity table
-// app.delete('/games/:id', async (req, res) => {
-//   const { id } = req.params;
-//   try {
-//       const result = await client.query(
-//           'DELETE FROM steam_user_activity WHERE user_id = $1 RETURNING *',
-//           [id]
-//       );
-//       if (result.rows.length === 0) {
-//           return res.status(404).send('Game not found');
-//       }
-//       res.json({ message: 'Game deleted' }); // Confirm deletion
-//   } catch (err) {
-//       console.error(err);
-//       res.status(500).send('Server Error');
-//   }
-// });
+    if (query.rowCount === 0) {
+      res.status(404).send("No record found to delete");
+    } else {
+      res.send(query.rows[0]);
+    }
+  } catch (error) {
+    res.status(500).json({ error: "Failed to delete record", details: error.message });
+  } 
+});
 
 
