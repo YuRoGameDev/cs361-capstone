@@ -47,8 +47,8 @@ app.get('/games', async function (req, res) {
   const query = `
    SELECT 
       user_id,
-      game_title,
-      behavior_name,
+      game_name,
+      behavior,
       COUNT(*) AS activity_count,
       SUM(value) AS total_value
     FROM steam_user_activity
