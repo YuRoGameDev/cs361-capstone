@@ -9,9 +9,9 @@ const PORT = 8000;
 // PostgreSQL client setup
 const client = new Client({
   user: 'postgres', // Replace with your PostgreSQL username
-  host: 'localhost', // Replace with your PostgreSQL host, for AWS EC2, it will be the public IP or hostname
+  host: 'my-pace-postgresql.c9wo2yq84f4w.us-east-2.rds.amazonaws.com', // Replace with your PostgreSQL host, for AWS EC2, it will be the public IP or hostname
   database: 'steam_games_db', // Replace with your database name
-  password: 'your_password', // Replace with your PostgreSQL password
+  password: 'mypacepostgresql', // Replace with your PostgreSQL password
   port: 5432, // Default PostgreSQL port
 });
 
