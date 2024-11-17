@@ -125,8 +125,17 @@ app.put('/update-game', async function (req, res) {
   }
 });
 
+
+// Example of setting Content Security Policy (CSP) headers
+app.use((req, res, next) => {
+  res.setHeader('Content-Security-Policy', "default-src 'none'; connect-src 'self' http://ec2-18-222-75-52.us-east-2.compute.amazonaws.com:8000;");
+  next();
+});
+
+
 //DELETE request that deletes an ID
 app.delete('/delete-game/:id', async function (req, res) {
+  
   const { id } = req.params;
   const client = new Client(clientConfig);
 
