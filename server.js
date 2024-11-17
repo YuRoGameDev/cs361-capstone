@@ -143,7 +143,7 @@ app.delete('/delete-game/:id', async function (req, res) {
     await client.connect();
 
     const query = await client.query(
-      'DELETE FROM steam_user_activity WHERE "user-id" = $1 AND "game-title" = $2 RETURNING *',
+      'DELETE FROM steam_user_activity WHERE "user_id" = $1 AND "game_name" = $2 RETURNING *',
       [user_id, game_name]
     );
 
