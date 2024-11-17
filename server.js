@@ -4,6 +4,7 @@ const { Client } = require('pg');
 const express = require('express');
 const app = express();
 app.use(express.static("public"));
+app.use(express.json());
 const PORT = 8000;
 app.listen(PORT);
 
@@ -42,7 +43,23 @@ app.get('/error', function (req, res) {
 app.get('/games', async function (req, res) {
   const client = new Client(clientConfig);
   await client.connect();
-  const result = await client.query("SELECT * FROM steam_user_activity");
+
+  const query = `
+  SELECT 
+    u.username,
+    g.title AS game_title,
+    ua.behavior_name,
+    COUNT(ua.id) AS activity_count,
+    SUM(ua.value) AS total_value
+  FROM steam_user_activity ua
+  JOIN users u ON ua.user_id = u.id
+  JOIN games g ON ua.game_title = g.title
+  GROUP BY u.username, g.title, ua.behavior_name
+  ORDER BY activity_count DESC
+  LIMIT 10;
+`;
+
+  const result = await client.query(query);
   if (result.rowCount < 1) {
     res.status(500).send("Internal Error - No Games Found");
   } else {
@@ -73,7 +90,7 @@ app.post('/add-game', async function (req, res) {
 
 //PUT request that updates a users activity by putting in their id first, and then the data to update.
 app.put('/update-game', async function (req, res) {
-  const { id, user_id, game_name, behavior, value } = req.body; 
+  const { id, user_id, game_name, behavior, value } = req.body;
   const client = new Client(clientConfig);
 
   try {
@@ -94,12 +111,12 @@ app.put('/update-game', async function (req, res) {
     }
   } catch (error) {
     res.status(500).json({ error: "Failed to update record", details: error.message });
-  } 
+  }
 });
 
 //DELETE request that deletes an ID
 app.delete('/delete-game/:id', async function (req, res) {
-  const { id } = req.params; 
+  const { id } = req.params;
   const client = new Client(clientConfig);
 
   try {
@@ -117,7 +134,7 @@ app.delete('/delete-game/:id', async function (req, res) {
     }
   } catch (error) {
     res.status(500).json({ error: "Failed to delete record", details: error.message });
-  } 
+  }
 });
 
 
