@@ -88,9 +88,9 @@ app.post('/add-game', async function (req, res) {
 
 });
 
-//PUT request that updates a users activity by putting in their id first, and then the data to update.
+//PUT request that updates users activity
 app.put('/update-game', async function (req, res) {
-  const { id, user_id, game_name, behavior, value } = req.body;
+  const { user_id, game_name, behavior, value } = req.body;
   const client = new Client(clientConfig);
 
   try {
@@ -98,10 +98,10 @@ app.put('/update-game', async function (req, res) {
 
     const query = await client.query(
       `UPDATE steam_user_activity
-       SET user_id = $1, game_name = $2, behavior = $3, value = $4
-       WHERE id = $5
+      SET value = $1
+       WHERE user_id = $2 AND game_name = $3 AND behavior = $4
        RETURNING *`,
-      [user_id, game_name, behavior, value, id]
+      [value, user_id, game_name, behavior]
     );
 
     if (query.rowCount === 0) {
