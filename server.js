@@ -52,7 +52,7 @@ app.get('/games', async function (req, res) {
       COUNT(*) AS activity_count,
       SUM(value) AS total_value
     FROM steam_user_activity
-    GROUP BY user_id, game_title, behavior_name
+    GROUP BY user_id, game_name, behavior
     ORDER BY activity_count DESC;
 `;
 
