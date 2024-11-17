@@ -42,9 +42,11 @@ app.get('/error', function (req, res) {
 //GET request that reads the data
 app.get('/games', async function (req, res) {
   const client = new Client(clientConfig);
-  await client.connect();
 
-  const query = `
+  try {
+    await client.connect();
+
+    const query = `
    SELECT 
       user_id,
       game_name,
@@ -56,14 +58,20 @@ app.get('/games', async function (req, res) {
     ORDER BY activity_count DESC;
 `;
 
-  const result = await client.query(query);
-  if (result.rowCount < 1) {
-    res.status(500).send("Internal Error - No Games Found");
-  } else {
-    res.set("Content-Type", "application/json");
-    res.send(result.rows);
+    const result = await client.query(query);
+    if (result.rowCount < 1) {
+      res.status(500).send("Internal Error - No Games Found");
+    } else {
+      res.set("Content-Type", "application/json");
+      res.send(result.rows);
+    }
   }
-  await client.end();
+  catch (error) {
+    res.status(500).json({ error: "Failed to read", details: error.message });
+  }
+  finally {
+    await client.end();
+  }
 });
 
 //POST request that inserts the data
