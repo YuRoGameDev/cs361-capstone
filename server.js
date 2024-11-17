@@ -53,8 +53,7 @@ app.get('/games', async function (req, res) {
       SUM(value) AS total_value
     FROM steam_user_activity
     GROUP BY user_id, game_name, behavior
-    ORDER BY activity_count DESC
-    LIMIT 10 OFFSET 20;
+    ORDER BY activity_count DESC;
 `;
 
   const result = await client.query(query);
@@ -83,6 +82,9 @@ app.post('/add-game', async function (req, res) {
   } catch (error) {
     res.status(500).json({ error: "Failed to insert", details: error.message });
   }
+  finally {
+    await client.end();
+  }
 
 });
 
@@ -110,6 +112,9 @@ app.put('/update-game', async function (req, res) {
   } catch (error) {
     res.status(500).json({ error: "Failed to update record", details: error.message });
   }
+  finally {
+    await client.end();
+  }
 });
 
 //DELETE request that deletes an ID
@@ -132,6 +137,9 @@ app.delete('/delete-game/:id', async function (req, res) {
     }
   } catch (error) {
     res.status(500).json({ error: "Failed to delete record", details: error.message });
+  }
+  finally {
+    await client.end();
   }
 });
 
