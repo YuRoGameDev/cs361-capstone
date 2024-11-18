@@ -7,7 +7,7 @@ app.use(express.static("public"));
 app.use(express.json());
 const PORT = 8000;
 app.listen(PORT);
-
+const fs = require('fs');
 
 const clientConfig = new Client({
   user: 'postgres',
