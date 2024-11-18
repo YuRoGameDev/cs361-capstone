@@ -69,9 +69,7 @@ app.get('/games', async function (req, res) {
   catch (error) {
     res.status(500).json({ error: "Failed to read", details: error.message });
   }
-  finally {
-    await client.end();
-  }
+  await client.end();
 });
 
 //POST request that inserts the data
@@ -90,9 +88,7 @@ app.post('/add-game', async function (req, res) {
   } catch (error) {
     res.status(500).json({ error: "Failed to insert", details: error.message });
   }
-  finally {
-    await client.end();
-  }
+  await client.end();
 
 });
 
@@ -120,9 +116,7 @@ app.put('/update-game', async function (req, res) {
   } catch (error) {
     res.status(500).json({ error: "Failed to update record", details: error.message });
   }
-  finally {
-    await client.end();
-  }
+  await client.end();
 });
 
 
@@ -134,7 +128,7 @@ app.use((req, res, next) => {
 
 
 //DELETE request that deletes an ID
-app.delete('/delete-game/:id', async function (req, res) {
+app.delete('/delete-game', async function (req, res) {
   
   const { user_id, game_name } = req.params;
   const client = new Client(clientConfig);
@@ -156,9 +150,7 @@ app.delete('/delete-game/:id', async function (req, res) {
   } catch (error) {
     res.status(500).json({ error: "Failed to delete record", details: error.message });
   }
-  finally {
-    await client.end();
-  }
+  await client.end();
 });
 
 
