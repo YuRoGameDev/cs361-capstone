@@ -16,9 +16,9 @@ const clientConfig = new Client({
   password: 'mypacepostgresql',
   port: 5432,
   ssl: {
-rejectUnauthorized: true,
-ca: fs.readFileSync('/home/ec2-user/rds-combined-ca-bundle.pem').toString(),
-}
+    rejectUnauthorized: true,
+    ca: fs.readFileSync('/home/ec2-user/rds-combined-ca-bundle.pem').toString(),
+  }
 });
 
 
@@ -55,7 +55,8 @@ app.get('/games', async function (req, res) {
       SUM(value) AS total_value
     FROM steam_user_activity
     GROUP BY user_id, game_name, behavior
-    ORDER BY activity_count DESC;
+    ORDER BY activity_count DESC
+    LIMIT 10;
 `;
 
     const result = await client.query(query);
@@ -129,7 +130,7 @@ app.use((req, res, next) => {
 
 //DELETE request that deletes an ID
 app.delete('/delete-game', async function (req, res) {
-  
+
   const { user_id, game_name } = req.params;
   const client = new Client(clientConfig);
 
