@@ -16,8 +16,9 @@ const clientConfig = new Client({
   password: 'mypacepostgresql',
   port: 5432,
   ssl: {
-    ca: fs.readFileSync('home/ec2-user/my-ec2-key-pai.pem').toString(), // Adjust the path
-  },
+rejectUnauthorized: true,
+ca: fs.readFileSync('/home/ec2-user/rds-combined-ca-bundle.pem').toString(),
+}
 });
 
 
