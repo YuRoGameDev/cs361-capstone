@@ -17,7 +17,7 @@ const clientConfig = new Client({
   port: 5432,
   connectionTimeoutMillis: 30000,
   ssl: {
-    rejectUnauthorized: false,
+    rejectUnauthorized: true,
   }
 });
 
