@@ -15,10 +15,10 @@ const clientConfig = new Client({
   database: 'steam_games_db',
   password: 'mypacepostgresql',
   port: 5432,
-  ssl: {
-    rejectUnauthorized: false,
-    //ca: fs.readFileSync('/home/ec2-user/rds-combined-ca-bundle.pem').toString(),
-  }
+   ssl: false,//{
+  //   rejectUnauthorized: false,
+  //   //ca: fs.readFileSync('/home/ec2-user/rds-combined-ca-bundle.pem').toString(),
+  // }
 });
 
 
