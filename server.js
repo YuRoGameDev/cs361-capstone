@@ -15,9 +15,8 @@ const clientConfig = new Client({
   database: 'steam_games_db',
   password: 'mypacepostgresql',
   port: 5432,
-  connectionTimeoutMillis: 30000,
   ssl: {
-    rejectUnauthorized: true,
+    rejectUnauthorized: false,
   }
 });
 
