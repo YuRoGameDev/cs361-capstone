@@ -120,7 +120,7 @@ app.put('/update-game', async function (req, res) {
 //DELETE request that deletes an ID
 app.delete('/delete-game', async function (req, res) {
 
-  const { user_id, game_name } = req.params;
+  const { user_id, game_name } = req.body;
   //Removed creating a new client and just connected to the pool
   //const client = new Client(clientConfig);
   const client = await clientConfig.connect();
