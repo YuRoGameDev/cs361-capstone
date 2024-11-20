@@ -55,7 +55,7 @@ app.get('/games', async function (req, res) {
     FROM steam_user_activity
     GROUP BY user_id, game_name, behavior
     ORDER BY activity_count DESC
-    LIMIT 10;
+    LIMIT 500;
 `;
 
     const result = await client.query(query);
@@ -79,7 +79,11 @@ app.post('/add-game', async function (req, res) {
 
   try {
     const query = await client.query(
-      'INSERT INTO steam_user_activity (user_id, game_name, behavior, value) VALUES ($1, $2, $3, $4) RETURNING *',
+      `INSERT INTO steam_user_activity (user_id, game_name, behavior, value)
+       VALUES ($1, $2, $3, $4)
+       ON CONFLICT ("user_id", "game_name")
+       DO UPDATE SET behavior = EXCLUDED.behavior, value = EXCLUDED.value
+       RETURNING *`,
       [user_id, game_name, behavior, value]
     );
     res.send(query.rows[0]);
