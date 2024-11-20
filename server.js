@@ -50,7 +50,7 @@ SELECT
     user_id, 
     game_name, 
     behavior, 
-    COUNT(*) AS activity_count
+    value
 FROM steam_user_activity
 GROUP BY user_id, game_name, behavior
 ORDER BY game_name ASC
