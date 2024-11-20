@@ -1,6 +1,7 @@
 "use strict";
 
-const { Client } = require('pg');
+//Changed Client to Pool
+const { Pool } = require('pg');
 const express = require('express');
 const app = express();
 app.use(express.static("public"));
@@ -9,16 +10,16 @@ const PORT = 8000;
 app.listen(PORT);
 const fs = require('fs');
 
-const clientConfig = new Client({
+//Changed new Client to new Pool
+const clientConfig = new Pool({
   user: 'postgres',
   host: 'my-pace-postgresql.c9wo2yq84f4w.us-east-2.rds.amazonaws.com',
-  database: 'steam_games_db',
+  database: 'steam_user_activity',
   password: 'mypacepostgresql',
   port: 5432,
-   ssl: false,//{
-  //   rejectUnauthorized: false,
-  //   //ca: fs.readFileSync('/home/ec2-user/rds-combined-ca-bundle.pem').toString(),
-  // }
+  ssl: {
+    rejectUnauthorized: false,
+  }
 });
 
 
@@ -41,11 +42,9 @@ app.get('/error', function (req, res) {
 
 //GET request that reads the data
 app.get('/games', async function (req, res) {
-  const client = new Client(clientConfig);
+  const client = await clientConfig.connect();
 
   try {
-    await client.connect();
-
     const query = `
    SELECT 
       user_id,
@@ -70,16 +69,15 @@ app.get('/games', async function (req, res) {
   catch (error) {
     res.status(500).json({ error: "Failed to read", details: error.message });
   }
-  await client.end();
+  await client.release();
 });
 
 //POST request that inserts the data
 app.post('/add-game', async function (req, res) {
   const { user_id, game_name, behavior, value } = req.body;
-  const client = new Client(clientConfig);
+  const client = await clientConfig.connect();
 
   try {
-    await client.connect();
     const query = await client.query(
       'INSERT INTO steam_user_activity (user_id, game_name, behavior, value) VALUES ($1, $2, $3, $4) RETURNING *',
       [user_id, game_name, behavior, value]
@@ -89,18 +87,16 @@ app.post('/add-game', async function (req, res) {
   } catch (error) {
     res.status(500).json({ error: "Failed to insert", details: error.message });
   }
-  await client.end();
+  await client.release();
 
 });
 
 //PUT request that updates users activity
 app.put('/update-game', async function (req, res) {
   const { user_id, game_name, behavior, value } = req.body;
-  const client = new Client(clientConfig);
+  const client = await clientConfig.connect();
 
   try {
-    await client.connect();
-
     const query = await client.query(
       `UPDATE steam_user_activity
       SET value = $1
@@ -117,14 +113,7 @@ app.put('/update-game', async function (req, res) {
   } catch (error) {
     res.status(500).json({ error: "Failed to update record", details: error.message });
   }
-  await client.end();
-});
-
-
-// Example of setting Content Security Policy (CSP) headers
-app.use((req, res, next) => {
-  res.setHeader('Content-Security-Policy', "default-src 'none'; connect-src 'self' http://ec2-18-222-75-52.us-east-2.compute.amazonaws.com:8000;");
-  next();
+  await client.release();
 });
 
 
@@ -132,10 +121,11 @@ app.use((req, res, next) => {
 app.delete('/delete-game', async function (req, res) {
 
   const { user_id, game_name } = req.params;
-  const client = new Client(clientConfig);
-
+  //Removed creating a new client and just connected to the pool
+  //const client = new Client(clientConfig);
+  const client = await clientConfig.connect();
   try {
-    await client.connect();
+    //await client.connect();
 
     const query = await client.query(
       'DELETE FROM steam_user_activity WHERE "user_id" = $1 AND "game_name" = $2 RETURNING *',
@@ -151,7 +141,8 @@ app.delete('/delete-game', async function (req, res) {
   } catch (error) {
     res.status(500).json({ error: "Failed to delete record", details: error.message });
   }
-  await client.end();
+  //await client.end();
+  await client.release();
 });
 
 
