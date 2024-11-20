@@ -14,7 +14,7 @@ const fs = require('fs');
 const clientConfig = new Pool({
   user: 'postgres',
   host: 'my-pace-postgresql.c9wo2yq84f4w.us-east-2.rds.amazonaws.com',
-  database: 'steam_user_activity',
+  database: 'steam_games_db',
   password: 'mypacepostgresql',
   port: 5432,
   ssl: {
