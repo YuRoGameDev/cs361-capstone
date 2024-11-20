@@ -50,7 +50,7 @@ SELECT
     user_id, 
     game_name, 
     behavior, 
-    value
+     MAX(value) AS value
 FROM steam_user_activity
 GROUP BY user_id, game_name, behavior
 ORDER BY game_name ASC
@@ -116,7 +116,7 @@ app.put('/update-game', async function (req, res) {
 });
 
 
-//DELETE request that deletes an ID
+//DELETE request that deletes a game
 app.delete('/delete-game', async function (req, res) {
 
   const { user_id, game_name } = req.body;
