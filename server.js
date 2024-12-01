@@ -80,17 +80,8 @@ app.get('/games', async function (req, res) {
 
   try {
     const { userId, gameName } = req.query;
-    //     const query = `
-    // SELECT 
-    //     user_id, 
-    //     game_name, 
-    //     behavior, 
-    //      MAX(value) AS value
-    // FROM steam_user_activity
-    // GROUP BY user_id, game_name, behavior
-    // ORDER BY game_name ASC
-    // LIMIT 500;
-    // `;
+    console.log("Query Parameters:", { userId, gameName });
+    
     let query = `
       SELECT 
           user_id, 
@@ -119,7 +110,8 @@ app.get('/games', async function (req, res) {
 
     query += `
     GROUP BY user_id, game_name, behavior
-    ORDER BY game_name ASC;
+    ORDER BY game_name ASC
+    LIMIT 500;
   `;
 
 
@@ -132,6 +124,7 @@ app.get('/games', async function (req, res) {
     }
   }
   catch (error) {
+    console.error("Database Query Error:", error.message);
     res.status(500).json({ error: "Failed to read", details: error.message });
   }
   await client.release();
