@@ -15,7 +15,12 @@ function App() {
       method,
       headers: { "Content-Type": "application/json" },
     };
-    if (body) options.body = JSON.stringify(body);
+    if(method == "GET" && body){
+      const queryParams = new URLSearchParams(body).toString();
+      endpoint += `?${queryParams}`;
+    } else if (body) {
+      options.body = JSON.stringify(body); // For POST or other methods
+    }
 
     try {
       const res = await fetch(endpoint, options); // No `/api` prefix
