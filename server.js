@@ -7,12 +7,35 @@ const path = require("path");
 
 const app = express();
 
-app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(__dirname, "build")));
 //app.use(express.static("public"));
 app.use(express.json());
-const PORT = 8000;
-app.listen(PORT);
+const PORT = process.env.PORT || 8000;
+//app.listen(PORT);
 const fs = require('fs');
+
+app.use((req, res, next) => {
+  const origin = req.get("Origin") || req.get("Referer");
+  if (!origin || !origin.includes("localhost:8000")) {
+    return res.redirect("/"); 
+    //return res.status(403).json({ error: "Direct access to API is forbidden" });
+  }
+  next();
+});
+
+
+
+
+// app.get('*', (req, res) => {
+//   res.sendFile(path.join(__dirname, 'build', 'index.html'));
+// });
+
+// Start the server
+app.listen(PORT, () => {
+  console.log(`Server is running on http://localhost:${PORT}`);
+});
+
+
 
 //Changed new Client to new Pool
 const clientConfig = new Pool({
@@ -28,7 +51,7 @@ const clientConfig = new Pool({
 
 
 app.get('/hello', function (req, res) {
-  res.set("Content-Type", "text/plain");
+  //res.set("Content-Type", "text/plain");
   res.send('Hello World!');
 });
 
@@ -149,16 +172,5 @@ app.delete('/delete-game', async function (req, res) {
 });
 
 
-app.use((req, res, next) => {
-  if (req.path.startsWith("/api") || req.path.startsWith("/hello")) {
-    return next(); // Skip fallback for API routes
-  }
-  res.sendFile(path.join(__dirname, "public", "index.html"));
-});
-
-// Start the server
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
-});
 
 

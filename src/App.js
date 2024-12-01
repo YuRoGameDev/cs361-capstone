@@ -10,24 +10,19 @@ function App() {
       headers: { "Content-Type": "application/json" },
     };
     if (body) options.body = JSON.stringify(body);
-
+  
     try {
-      const res = await fetch(endpoint, options);
-      const contentType = res.headers.get("Content-Type");
-
+      const res = await fetch(endpoint, options); // No `/api` prefix
       if (!res.ok) throw new Error(`Error: ${res.statusText}`);
-      
-      if (contentType && contentType.includes("application/json")) {
-        const data = await res.json();
-        setResponse(JSON.stringify(data, null, 2));
-      } else {
-        const text = await res.text();
-        setResponse(text);
-      }
+      const data = await res.text(); // Expecting plain text
+      setResponse(data);
     } catch (error) {
       setResponse(`Error: ${error.message}`);
     }
   };
+  
+  
+  
 
   const handleEcho = () => {
     if (!echoInput.trim()) {
