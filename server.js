@@ -3,8 +3,12 @@
 //Changed Client to Pool
 const { Pool } = require('pg');
 const express = require('express');
+const path = require("path");
+
 const app = express();
-app.use(express.static("public"));
+
+app.use(express.static(path.join(__dirname, "public")));
+//app.use(express.static("public"));
 app.use(express.json());
 const PORT = 8000;
 app.listen(PORT);
@@ -142,6 +146,19 @@ app.delete('/delete-game', async function (req, res) {
   }
   //await client.end();
   await client.release();
+});
+
+
+app.use((req, res, next) => {
+  if (req.path.startsWith("/api") || req.path.startsWith("/hello")) {
+    return next(); // Skip fallback for API routes
+  }
+  res.sendFile(path.join(__dirname, "public", "index.html"));
+});
+
+// Start the server
+app.listen(PORT, () => {
+  console.log(`Server is running on http://localhost:${PORT}`);
 });
 
 
