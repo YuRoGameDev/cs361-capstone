@@ -3,13 +3,35 @@ import InputField from "./InputField";
 
 function App() {
   const [response, setResponse] = useState("");
-  const [echoInput, setEchoInput] = useState("");
+  const [gameResponse, setGameResponse] = useState("");
 
   const [formGameData, setGameData] = useState({
     input1: "",
     input2: "",
   });
-  const [gameResponse, setGameResponse] = useState("");
+
+  const [formAddData, setAddData] = useState({
+    input1: "",
+    input2: "",
+    behavior: "purchase",
+    value: "0",
+
+  });
+  const [isDropdownUpdate, setIsDropdownUpdate] = useState(false);
+
+  const handleDropdownChange = (column) => {
+    setAddData(prevData => ({
+      ...prevData,
+      behavior: column.target.value
+    }));
+  };
+  const handleDropdownValueChange = (column) => {
+    setAddData(prevData => ({
+      ...prevData,
+      value: column.target.value
+    }));
+  };
+
   const callGameApi = async (endpoint, method = "GET", body = null) => {
     const options = {
       method,
@@ -53,13 +75,7 @@ function App() {
     }
   };
 
-  const handleEcho = () => {
-    if (!echoInput.trim()) {
-      setResponse("Please provide input to echo.");
-      return;
-    }
-    callApi(`/echo?input=${encodeURIComponent(echoInput)}`);
-  };
+
 
   const handleChange = (e) => {
     const { id, value } = e.target;
@@ -91,20 +107,43 @@ function App() {
           })}>Get Games</button>
         </div>
 
-        <button onClick={() => callApi("/hello")}>Hello</button>
+
         <div>
-          <label htmlFor="echo-input">Echo Contents:</label>
-          <input
-            type="text"
-            id="echo-input"
-            value={echoInput}
-            onChange={(e) => setEchoInput(e.target.value)}
+          <InputField
+            label="Input 1"
+            id="input1"
+            value={formGameData.input1}
+            onChange={handleChange}
           />
-          <button onClick={handleEcho}>Echo</button>
+          <InputField
+            label="Input 1"
+            id="input1"
+            value={formGameData.input1}
+            onChange={handleChange}
+          />
+          <select onChange={handleDropdownChange}>
+            <option value="purchase">Purchased</option>
+            <option value="play">Hours Played</option>
+
+          </select>
+
+          {formAddData.behavior === 'play' && (
+            <InputField
+              label="Input 1"
+              id="input1"
+              value={formGameData.input1}
+              onChange={handleChange}
+            />
+          )}
+
+          {formAddData.behavior === 'purchase' && (
+            <select onChange={handleDropdownValueChange}>
+              <option value="0">Not Purchased</option>
+              <option value="1">Purchased</option>
+            </select>
+          )}
+
         </div>
-        <button onClick={() => callApi("/error")}>Error</button>
-
-
         <button
           onClick={() =>
             callApi("/add-game", "POST", {

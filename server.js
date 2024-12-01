@@ -120,6 +120,7 @@ app.get('/games', async function (req, res) {
     const result = await client.query(query, values);
     if (result.rowCount < 1) {
       res.status(500).send("Internal Error - No Games Found");
+      res.send("No Data Found");
     } else {
       res.set("Content-Type", "application/json");
       res.send(result.rows);
