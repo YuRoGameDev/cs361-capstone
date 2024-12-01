@@ -103,12 +103,12 @@ app.get('/games', async function (req, res) {
     const conditions = [];
     const values = [];
 
-    if(userId){
-      conditions.push("user_id = $1");
+    if (userId) {
+      conditions.push(`user_id = $${conditions.length + 1}`);
       values.push(userId);
     }
     if (gameName) {
-      conditions.push("game_name = $2");
+      conditions.push(`game_name = $${conditions.length + 1}`);
       values.push(gameName);
     }
 
