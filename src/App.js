@@ -59,6 +59,7 @@ function App() {
   };
 
   return (
+    <div>
     <div style={{ display: "flex", gap: "20px", padding: "20px" }}>
       <div>
 
@@ -131,7 +132,10 @@ function App() {
         Delete Game
       </button>
 
-      <pre>{response}</pre>
+      
+    </div>
+    <pre>{response}</pre>
+    <pre>{gameResponse}</pre>
     </div>
   );
 }
