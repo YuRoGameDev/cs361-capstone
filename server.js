@@ -28,7 +28,7 @@ app.use((req, res, next) => {
   const origin = req.get("Origin") || req.get("Referer");
 
   // Allow requests from localhost during development and the EC2 public address in production
-  const allowedOrigins = [`http://localhost:8000`, `http://3.144.76.209:8000`,"ec2-3-144-76-209.us-east-2.compute.amazonaws.com"];
+  const allowedOrigins = [`http://localhost:8000`, `http://3.144.76.209:8000`, "ec2-3-144-76-209.us-east-2.compute.amazonaws.com:8000"];
   
   if (!origin || !allowedOrigins.some((allowed) => origin.startsWith(allowed))) {
     return res.redirect("/"); // Redirect to home page if not from allowed origins
