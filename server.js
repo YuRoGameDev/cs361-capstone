@@ -114,6 +114,8 @@ app.get('/games', async function (req, res) {
     LIMIT 500;
   `;
 
+  console.log("Generated Query:", query);  // Check the generated SQL query
+  console.log("Values:", values); // Check the values passed to the query
 
     const result = await client.query(query, values);
     if (result.rowCount < 1) {

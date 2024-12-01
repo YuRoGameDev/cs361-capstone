@@ -86,7 +86,7 @@ function App() {
           />
 
           <button onClick={() => callGameApi("/games", "GET", {
-            userID: formGameData.input1,
+            userId: formGameData.input1,
             gameName: formGameData.input2,
           })}>Get Games</button>
         </div>
