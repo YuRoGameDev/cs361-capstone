@@ -29,7 +29,7 @@ app.use((req, res, next) => {
 
   // Allow requests from localhost during development and the EC2 public address in production
   const allowedOrigins = [`http://localhost:8000`, `http://3.144.76.209:8000`, "http://ec2-3-144-76-209.us-east-2.compute.amazonaws.com:8000"];
-  
+
   if (!origin || !allowedOrigins.some((allowed) => origin.startsWith(allowed))) {
     return res.redirect("/"); // Redirect to home page if not from allowed origins
   }
@@ -79,19 +79,51 @@ app.get('/games', async function (req, res) {
   const client = await clientConfig.connect();
 
   try {
-    const query = `
-SELECT 
-    user_id, 
-    game_name, 
-    behavior, 
-     MAX(value) AS value
-FROM steam_user_activity
-GROUP BY user_id, game_name, behavior
-ORDER BY game_name ASC
-LIMIT 500;
-`;
+    const { userId, gameName } = req.query;
+    //     const query = `
+    // SELECT 
+    //     user_id, 
+    //     game_name, 
+    //     behavior, 
+    //      MAX(value) AS value
+    // FROM steam_user_activity
+    // GROUP BY user_id, game_name, behavior
+    // ORDER BY game_name ASC
+    // LIMIT 500;
+    // `;
+    let query = `
+      SELECT 
+          user_id, 
+          game_name, 
+          behavior, 
+          MAX(value) AS value
+      FROM steam_user_activity
+    `;
 
-    const result = await client.query(query);
+    const conditions = [];
+    const values = [];
+
+    if(userId){
+      conditions.push("user_id = $1");
+      values.push(userId);
+    }
+    if (gameName) {
+      conditions.push("game_name = $2");
+      values.push(gameName);
+    }
+
+    // Append the WHERE clause if there are conditions
+    if (conditions.length > 0) {
+      query += ` WHERE ${conditions.join(" AND ")}`;
+    }
+
+    query += `
+    GROUP BY user_id, game_name, behavior
+    ORDER BY game_name ASC;
+  `;
+
+
+    const result = await client.query(query, values);
     if (result.rowCount < 1) {
       res.status(500).send("Internal Error - No Games Found");
     } else {

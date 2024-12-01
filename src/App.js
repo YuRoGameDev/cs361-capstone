@@ -1,8 +1,32 @@
 import React, { useState } from "react";
+import InputField from "./InputField";
 
 function App() {
   const [response, setResponse] = useState("");
   const [echoInput, setEchoInput] = useState("");
+
+  const [formGameData, setFormData] = useState({
+    input1: "",
+    input2: "",
+  });
+  const [gameResponse, setGameResponse] = useState("");
+  const callGameApi = async (endpoint, method = "GET", body = null) => {
+    const options = {
+      method,
+      headers: { "Content-Type": "application/json" },
+    };
+    if (body) options.body = JSON.stringify(body);
+
+    try {
+      const res = await fetch(endpoint, options); // No `/api` prefix
+      if (!res.ok) throw new Error(`Error: ${res.statusText}`);
+      const data = await res.text(); // Expecting plain text
+      setGameResponse(data);
+    } catch (error) {
+      setGameResponse(`Error: ${error.message}`);
+    }
+  };
+
 
   const callApi = async (endpoint, method = "GET", body = null) => {
     const options = {
@@ -10,7 +34,7 @@ function App() {
       headers: { "Content-Type": "application/json" },
     };
     if (body) options.body = JSON.stringify(body);
-  
+
     try {
       const res = await fetch(endpoint, options); // No `/api` prefix
       if (!res.ok) throw new Error(`Error: ${res.statusText}`);
@@ -20,9 +44,6 @@ function App() {
       setResponse(`Error: ${error.message}`);
     }
   };
-  
-  
-  
 
   const handleEcho = () => {
     if (!echoInput.trim()) {
@@ -32,9 +53,34 @@ function App() {
     callApi(`/echo?input=${encodeURIComponent(echoInput)}`);
   };
 
+  const handleChange = (e) => {
+    const { id, value } = e.target;
+    formGameData((prev) => ({ ...prev, [id]: value }));
+  };
+
   return (
-    <div>
-      <h1>Server Commands</h1>
+    <div style={{ display: "flex", gap: "20px", padding: "20px" }}>
+      <div>
+
+        <InputField
+          label="Input 1"
+          id="input1"
+          value={formGameData.input1}
+          onChange={handleChange}
+        />
+
+        <InputField
+          label="Input 2"
+          id="input2"
+          value={formGameData.input2}
+          onChange={handleChange}
+        />
+
+        <button onClick={() => callGameApi("/games", "GET", {
+          userID: formGameData.input1,
+          gameName: formGameData.input2,
+        })}>Get Games</button>
+      </div>
 
       <button onClick={() => callApi("/hello")}>Hello</button>
       <div>
@@ -48,7 +94,7 @@ function App() {
         <button onClick={handleEcho}>Echo</button>
       </div>
       <button onClick={() => callApi("/error")}>Error</button>
-      <button onClick={() => callApi("/games")}>Get Games</button>
+
 
       <button
         onClick={() =>
