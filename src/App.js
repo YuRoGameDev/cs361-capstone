@@ -23,6 +23,8 @@ function App() {
     const queryParams = new URLSearchParams(filteredBody).toString();
     endpoint += queryParams ? `?${queryParams}` : ""; // Append query only if it exists
 
+    console.log("Request URL:", endpoint);
+
     try {
       const res = await fetch(endpoint, options); // No `/api` prefix
       if (!res.ok) throw new Error(`Error: ${res.statusText}`);
