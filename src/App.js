@@ -5,7 +5,7 @@ function App() {
   const [response, setResponse] = useState("");
   const [echoInput, setEchoInput] = useState("");
 
-  const [formGameData, setFormData] = useState({
+  const [formGameData, setGameData] = useState({
     input1: "",
     input2: "",
   });
@@ -55,7 +55,7 @@ function App() {
 
   const handleChange = (e) => {
     const { id, value } = e.target;
-    formGameData((prev) => ({ ...prev, [id]: value }));
+    setGameData((prev) => ({ ...prev, [id]: value }));
   };
 
   return (
