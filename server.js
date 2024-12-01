@@ -15,21 +15,27 @@ const HOST = process.env.HOST || "0.0.0.0";
 //app.listen(PORT);
 const fs = require('fs');
 
+// app.use((req, res, next) => {
+//   const origin = req.get("Origin") || req.get("Referer");
+//   if (!origin || !origin.includes("localhost:8000")) {
+//     return res.redirect("/"); 
+//     //return res.status(403).json({ error: "Direct access to API is forbidden" });
+//   }
+//   next();
+// });
+
 app.use((req, res, next) => {
   const origin = req.get("Origin") || req.get("Referer");
-  if (!origin || !origin.includes("localhost:8000")) {
-    return res.redirect("/"); 
-    //return res.status(403).json({ error: "Direct access to API is forbidden" });
+
+  // Allow requests from localhost during development and the EC2 public address in production
+  const allowedOrigins = [`http://localhost:8000`, `http://3.144.76.209:8000`,"ec2-3-144-76-209.us-east-2.compute.amazonaws.com"];
+  
+  if (!origin || !allowedOrigins.some((allowed) => origin.startsWith(allowed))) {
+    return res.redirect("/"); // Redirect to home page if not from allowed origins
   }
+
   next();
 });
-
-
-
-
-// app.get('*', (req, res) => {
-//   res.sendFile(path.join(__dirname, 'build', 'index.html'));
-// });
 
 // Start the server
 app.listen(PORT, HOST, () => {
