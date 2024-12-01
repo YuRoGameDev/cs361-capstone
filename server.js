@@ -11,6 +11,7 @@ app.use(express.static(path.join(__dirname, "build")));
 //app.use(express.static("public"));
 app.use(express.json());
 const PORT = process.env.PORT || 8000;
+const HOST = process.env.HOST || "0.0.0.0";
 //app.listen(PORT);
 const fs = require('fs');
 
@@ -31,8 +32,8 @@ app.use((req, res, next) => {
 // });
 
 // Start the server
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+app.listen(PORT, HOST, () => {
+  console.log(`Server running on http://${HOST}:${PORT}`);
 });
 
 
