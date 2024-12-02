@@ -7,6 +7,8 @@ function App() {
  
   //#region Game Get
   const [gameResponse, setGameResponse] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
   const [formGameData, setGameData] = useState({
     id: "",
     name: "",
@@ -17,17 +19,39 @@ function App() {
     setGameData((prev) => ({ ...prev, [id]: value }));
   };
 
-  const callGameApi = async (endpoint, method = "GET", body = null) => {
-    const options = {
-      method,
-      headers: { "Content-Type": "application/json" },
-    };
+  const handlePageChange = (newPage) => {
+    setCurrentPage(newPage);
+    callGameApi(newPage); // Fetch data for the new page
+  };
 
-    const filteredBody = Object.fromEntries(
-      Object.entries(body).filter(([_, value]) => value.trim() !== "")
-    );
+  useEffect(() => {
+    callGameApi(currentPage); // Fetch data for the current page when the component mounts or currentPage changes
+}, [currentPage]);
+
+//endpoint, method = "GET", body = null
+  const callGameApi = async (page = 1) => {
+    const limit = 50;
+    const offset = (page - 1) * limit;
+    
+    // const options = {
+    //   method,
+    //   headers: { "Content-Type": "application/json" },
+    // };
+
+    // const filteredBody = Object.fromEntries(
+    //   Object.entries(body).filter(([_, value]) => value.trim() !== "")
+    // );
+
+    const filteredBody = {
+      userId: formGameData.id,
+      gameName: formGameData.name,
+      limit: limit,
+      offset: offset,
+    };
+    
     const queryParams = new URLSearchParams(filteredBody).toString();
-    endpoint += queryParams ? `?${queryParams}` : "";
+    const endpoint = `/games?${queryParams}`; 
+    //endpoint += queryParams ? `?${queryParams}` : "";
 
     console.log("Request URL:", endpoint);
 
@@ -35,7 +59,8 @@ function App() {
       const res = await fetch(endpoint, options);
       if (!res.ok) throw new Error(`Error: ${res.statusText}`);
       const data = await res.text();
-      setGameResponse(data);
+      setGameResponse(data.data);
+      setTotalPages(Math.ceil(data.total / limit));
     } catch (error) {
       setGameResponse(`Error: ${error.message}`);
     }
@@ -198,13 +223,24 @@ function App() {
           onChange={handleGameChange}
         />
 
-        <button onClick={() => callGameApi("/games", "GET", {
+<button onClick={() => callGameApi(currentPage)}>
+          Get Games
+        </button>
+
+        {/* <button onClick={() => callGameApi("/games", "GET", {
           userId: formGameData.id,
           gameName: formGameData.name,
-        })}>Get Games</button>
+        })}>Get Games</button> */}
       </div>
 
-      <GameDisplay gameResponse={gameResponse}/>
+      {/* <GameDisplay gameResponse={gameResponse}/> */}
+
+      <GameDisplay
+        gameResponse={JSON.stringify(gameResponse)} // Pass the game data as JSON string
+        currentPage={currentPage} // Pass current page to the display component
+        totalPages={totalPages} // Pass total pages to the display component
+        onPageChange={handlePageChange} // Pass the page change handler to GameDisplay
+      />
 
       <div style={{ display: "flex", gap: "20px", padding: "20px" }}>
         {/* Game Add */}

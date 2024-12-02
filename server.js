@@ -62,7 +62,9 @@ app.get('/games', async function (req, res) {
   const client = await clientConfig.connect();
 
   try {
-    const { userId, gameName } = req.query;
+    const { userId, gameName, limit = 50, offset = 0 } = req.query;
+ 
+
     console.log("Query Parameters:", { userId, gameName });
 
     let query = `
@@ -93,18 +95,34 @@ app.get('/games', async function (req, res) {
     query += `
     GROUP BY user_id, game_name, behavior
     ORDER BY game_name ASC
-    LIMIT 500;
+    LIMIT $${values.length + 1} OFFSET $${values.length + 2};
   `;
+    values.push(limit);
+    values.push(offset);
 
     console.log("Generated Query:", query); 
     console.log("Values:", values);
 
     const result = await client.query(query, values);
+
+    const countQuery = `
+    SELECT COUNT(DISTINCT user_id, game_name, behavior) AS total
+    FROM steam_user_activity
+  `;
+    
+    const totalResult = await client.query(countQuery);
+    
+    const totalRows = totalResult.rows[0].total;
+
     if (result.rowCount < 1) {
       res.status(404).send("No Data Found");
     } else {
-      res.set("Content-Type", "application/json");
-      res.send(result.rows);
+      res.json({
+        data: result.rows,
+        total: totalRows,
+      })
+      // res.set("Content-Type", "application/json");
+      // res.send(result.rows);
     }
   }
   catch (error) {
