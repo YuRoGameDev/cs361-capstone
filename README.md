@@ -1,4 +1,4 @@
-# Getting Started with Create React App
+# CS371 Capstone Project
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
@@ -8,11 +8,14 @@ In the project directory, you can run:
 
 ### `npm start`
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+Runs the app through server.js. Run this after building
+Open [http://localhost:8000](http://localhost:8000) to view it in your browser.
 
 The page will reload when you make changes.\
 You may also see any lint errors in the console.
+
+### 'npm run start:d"
+Runs a development version with react-scripts and not server.js
 
 ### `npm test`
 
