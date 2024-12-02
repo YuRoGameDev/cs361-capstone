@@ -44,7 +44,7 @@ function App() {
     // const offset = (page - 1) * limit;
     
     const options = {
-      method,
+      method: "GET",
       headers: { "Content-Type": "application/json" },
     };
 
@@ -71,7 +71,7 @@ function App() {
       if (!res.ok) throw new Error(`Error: ${res.statusText}`);
       const data = await res.json();
       setGameResponse(data.data);
-      setTotalPages(Math.ceil(data.total / limit));
+      setTotalPages(Math.ceil(data.total / 50));
     } catch (error) {
       setGameResponse(`Error: ${error.message}`);
     }
