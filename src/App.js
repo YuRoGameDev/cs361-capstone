@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import InputField from "./InputField";
 import GameDisplay from "./GameDisplay";
 
@@ -56,7 +56,8 @@ function App() {
     console.log("Request URL:", endpoint);
 
     try {
-      const res = await fetch(endpoint, options);
+      //, options
+      const res = await fetch(endpoint);
       if (!res.ok) throw new Error(`Error: ${res.statusText}`);
       const data = await res.text();
       setGameResponse(data.data);
