@@ -2,7 +2,9 @@ import React, { useState } from "react";
 import InputField from "./InputField";
 
 function App() {
-//#region Game Get
+  const [response, setResponse] = useState("");
+ 
+  //#region Game Get
   const [gameResponse, setGameResponse] = useState("");
   const [formGameData, setGameData] = useState({
     id: "",
@@ -24,23 +26,20 @@ function App() {
       Object.entries(body).filter(([_, value]) => value.trim() !== "")
     );
     const queryParams = new URLSearchParams(filteredBody).toString();
-    endpoint += queryParams ? `?${queryParams}` : ""; 
+    endpoint += queryParams ? `?${queryParams}` : "";
 
     console.log("Request URL:", endpoint);
 
     try {
-      const res = await fetch(endpoint, options); 
+      const res = await fetch(endpoint, options);
       if (!res.ok) throw new Error(`Error: ${res.statusText}`);
-      const data = await res.text(); 
+      const data = await res.text();
       setGameResponse(data);
     } catch (error) {
       setGameResponse(`Error: ${error.message}`);
     }
   };
   //#endregion
-  
-
-  const [response, setResponse] = useState("");
 
   //#region  Game Add
   const [formAddData, setAddData] = useState({
@@ -67,7 +66,7 @@ function App() {
       setResponse("User ID and Name cannot be empty.");
       return;
     }
-    
+
     const options = {
       method,
       headers: { "Content-Type": "application/json" },
@@ -75,11 +74,10 @@ function App() {
     if (body) options.body = JSON.stringify(body);
 
     try {
-      const res = await fetch(endpoint, options); 
-      if (!res.ok)
-      { throw new Error(`Error: ${res.statusText}`) }
+      const res = await fetch(endpoint, options);
+      if (!res.ok) { throw new Error(`Error: ${res.statusText}`) }
       else {
-        const data = await res.text(); 
+        const data = await res.text();
         if (formAddData.purchaseValue === "1") {
           setResponse(`Added UserID: ${formAddData.id}, GameName: ${formAddData.gameName}, Purchase Status: Bought, Hours Played: ${formAddData.playValue}`);
         } else {
@@ -109,7 +107,7 @@ function App() {
       setResponse("User ID and Name cannot be empty.");
       return;
     }
-    
+
     const options = {
       method,
       headers: { "Content-Type": "application/json" },
@@ -117,11 +115,10 @@ function App() {
     if (body) options.body = JSON.stringify(body);
 
     try {
-      const res = await fetch(endpoint, options); 
-      if (!res.ok)
-      { throw new Error(`Error: ${res.statusText}`) }
+      const res = await fetch(endpoint, options);
+      if (!res.ok) { throw new Error(`Error: ${res.statusText}`) }
       else {
-        const data = await res.text(); 
+        const data = await res.text();
         setResponse(data);
       }
 
@@ -156,7 +153,7 @@ function App() {
       setResponse("User ID and Name cannot be empty.");
       return;
     }
-    
+
     const options = {
       method,
       headers: { "Content-Type": "application/json" },
@@ -164,11 +161,10 @@ function App() {
     if (body) options.body = JSON.stringify(body);
 
     try {
-      const res = await fetch(endpoint, options); 
-      if (!res.ok)
-      { throw new Error(`Error: ${res.statusText}`) }
+      const res = await fetch(endpoint, options);
+      if (!res.ok) { throw new Error(`Error: ${res.statusText}`) }
       else {
-        const data = await res.text(); 
+        const data = await res.text();
         if (formUpdateData.purchaseValue === "1") {
           setResponse(`Updated UserID: ${formUpdateData.id}, GameName: ${formUpdateData.gameName}, Purchase Status: Bought, Hours Played: ${formUpdateData.playValue}`);
         } else {
@@ -180,35 +176,33 @@ function App() {
       setResponse(`Error: ${error.message}`);
     }
   };
-//#endregion
-
-
+  //#endregion
 
 
   return (
     <div>
       {/* Game Get */}
       <div style={{ gap: "20px", padding: "20px" }}>
-          <InputField
-            label="User ID"
-            id="id"
-            value={formGameData.id}
-            onChange={handleGameChange}
-          />
+        <InputField
+          label="User ID"
+          id="id"
+          value={formGameData.id}
+          onChange={handleGameChange}
+        />
 
-          <InputField
-            label="Game Name"
-            id="name"
-            value={formGameData.name}
-            onChange={handleGameChange}
-          />
+        <InputField
+          label="Game Name"
+          id="name"
+          value={formGameData.name}
+          onChange={handleGameChange}
+        />
 
-          <button onClick={() => callGameApi("/games", "GET", {
-            userId: formGameData.id,
-            gameName: formGameData.name,
-          })}>Get Games</button>
+        <button onClick={() => callGameApi("/games", "GET", {
+          userId: formGameData.id,
+          gameName: formGameData.name,
+        })}>Get Games</button>
       </div>
-      
+
       <pre>{gameResponse}</pre>
 
       <div style={{ display: "flex", gap: "20px", padding: "20px" }}>
@@ -227,17 +221,16 @@ function App() {
             onChange={handleAddChange}
           />
 
-<div style={{ marginBottom: "10px" }}>
-  <label htmlFor="dropdownAddChange" style={{ display: "block" }}>Purchase Status</label>
-  <select id="dropdownAddChange" onChange={handleDropdownAddChange}>
-    <option value="0">Not Purchased</option>
-    <option value="1">Purchased</option>
-  </select>
-</div>
-           
+          <div style={{ marginBottom: "10px" }}>
+            <label htmlFor="dropdownAddChange" style={{ display: "block" }}>Purchase Status</label>
+            <select id="dropdownAddChange" onChange={handleDropdownAddChange}>
+              <option value="0">Not Purchased</option>
+              <option value="1">Purchased</option>
+            </select>
+          </div>
+
           {formAddData.purchaseValue === '1' && (
             <InputField
-              
               label="Hours Played"
               id="playValue"
               value={formAddData.playValue}
@@ -245,30 +238,29 @@ function App() {
             />
           )}
 
-          
-<button
-          onClick={() => {
-            callAddApi("/add-game", "POST", {
-              user_id: formAddData.id,
-              game_name: formAddData.name,
-              behavior: "purchase",
-              value: formAddData.purchasevalue,
-            });
-            callAddApi("/add-game", "POST", {
-              user_id: formAddData.id,
-              game_name: formAddData.name,
-              behavior: "play",
-              value: formAddData.playValue,
-            });
-          }}
-        >
-          Add Game
-        </button>
+          <button
+            onClick={() => {
+              callAddApi("/add-game", "POST", {
+                user_id: formAddData.id,
+                game_name: formAddData.name,
+                behavior: "purchase",
+                value: formAddData.purchasevalue,
+              });
+              callAddApi("/add-game", "POST", {
+                user_id: formAddData.id,
+                game_name: formAddData.name,
+                behavior: "play",
+                value: formAddData.playValue,
+              });
+            }}
+          >
+            Add Game
+          </button>
         </div>
 
-          {/* Game Update */}
+        {/* Game Update */}
         <div>
-        <InputField
+          <InputField
             label="User ID"
             id="id"
             value={formUpdateData.id}
@@ -281,17 +273,16 @@ function App() {
             onChange={handleUpdateChange}
           />
 
-<div style={{ marginBottom: "10px" }}>
-  <label htmlFor="dropdownUpdateChange" style={{ display: "block" }}>Purchase Status</label>
-  <select id="dropdownUpdateChange" onChange={handleDropdownUpdateChange}>
-    <option value="0">Not Purchased</option>
-    <option value="1">Purchased</option>
-  </select>
-</div>
-           
+          <div style={{ marginBottom: "10px" }}>
+            <label htmlFor="dropdownUpdateChange" style={{ display: "block" }}>Purchase Status</label>
+            <select id="dropdownUpdateChange" onChange={handleDropdownUpdateChange}>
+              <option value="0">Not Purchased</option>
+              <option value="1">Purchased</option>
+            </select>
+          </div>
+
           {formUpdateData.purchaseValue === '1' && (
             <InputField
-              
               label="Hours Played"
               id="playValue"
               value={formUpdateData.playValue}
@@ -299,29 +290,29 @@ function App() {
             />
           )}
 
-      <button
-          onClick={() => {
-            callUpdateApi("/update-game", "PUT", {
-              user_id: formUpdateData.id,
-              game_name: formUpdateData.name,
-              behavior: "purchase",
-              value: formUpdateData.purchasevalue,
-            });
-            callUpdateApi("/update-game", "PUT", {
-              user_id: formUpdateData.id,
-              game_name: formUpdateData.name,
-              behavior: "play",
-              value: formUpdateData.playValue,
-            });
-          }}
-        >
-          Update Game
-        </button>
+          <button
+            onClick={() => {
+              callUpdateApi("/update-game", "PUT", {
+                user_id: formUpdateData.id,
+                game_name: formUpdateData.name,
+                behavior: "purchase",
+                value: formUpdateData.purchasevalue,
+              });
+              callUpdateApi("/update-game", "PUT", {
+                user_id: formUpdateData.id,
+                game_name: formUpdateData.name,
+                behavior: "play",
+                value: formUpdateData.playValue,
+              });
+            }}
+          >
+            Update Game
+          </button>
         </div>
 
         {/* Game Delete */}
         <div>
-        <InputField
+          <InputField
             label="User ID"
             id="id"
             value={formDeleteData.id}
@@ -335,22 +326,23 @@ function App() {
             onChange={handleDeleteChange}
           />
 
-        <button
-          onClick={() =>
-            callDeleteApi("/delete-game", "DELETE", {
-              user_id: formDeleteData.id,
-              game_name: formDeleteData.name,
-            })
-          }
-        >
-          Delete Game
-        </button>
+          <button
+            onClick={() =>
+              callDeleteApi("/delete-game", "DELETE", {
+                user_id: formDeleteData.id,
+                game_name: formDeleteData.name,
+              })
+            }
+          >
+            Delete Game
+          </button>
 
         </div>
-        
+
       </div>
-      <pre>{response}</pre>
       
+      <pre>{response}</pre>
+
     </div>
   );
 }

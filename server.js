@@ -1,43 +1,29 @@
 "use strict";
 
-//Changed Client to Pool
+
 const { Pool } = require('pg');
 const express = require('express');
 const path = require("path");
-
 const app = express();
 
 app.use(express.static(path.join(__dirname, "build")));
-//app.use(express.static("public"));
 app.use(express.json());
 const PORT = process.env.PORT || 8000;
 const HOST = process.env.HOST || "0.0.0.0";
-//app.listen(PORT);
-const fs = require('fs');
 
-// app.use((req, res, next) => {
-//   const origin = req.get("Origin") || req.get("Referer");
-//   if (!origin || !origin.includes("localhost:8000")) {
-//     return res.redirect("/"); 
-//     //return res.status(403).json({ error: "Direct access to API is forbidden" });
-//   }
-//   next();
-// });
 
 app.use((req, res, next) => {
   const origin = req.get("Origin") || req.get("Referer");
-
-  // Allow requests from localhost during development and the EC2 public address in production
   const allowedOrigins = [`http://localhost:8000`, `http://3.144.76.209:8000`, "http://ec2-3-144-76-209.us-east-2.compute.amazonaws.com:8000"];
 
   if (!origin || !allowedOrigins.some((allowed) => origin.startsWith(allowed))) {
-    return res.redirect("/"); // Redirect to home page if not from allowed origins
+    return res.redirect("/"); 
   }
 
   next();
 });
 
-// Start the server
+
 app.listen(PORT, HOST, () => {
   console.log(`Server running on http://${HOST}:${PORT}`);
 });
@@ -56,9 +42,8 @@ const clientConfig = new Pool({
   }
 });
 
-
+/* Old Functions not used
 app.get('/hello', function (req, res) {
-  //res.set("Content-Type", "text/plain");
   res.send('Hello World!');
 });
 
@@ -68,11 +53,11 @@ app.get('/echo', function (req, res) {
   res.send(value);
 });
 
-
 app.get('/error', function (req, res) {
   res.set("Content-Type", "text/plain");
   res.status(400).send('Error, Bad Request!');
 });
+*/
 
 //GET request that reads the data
 app.get('/games', async function (req, res) {
@@ -81,7 +66,7 @@ app.get('/games', async function (req, res) {
   try {
     const { userId, gameName } = req.query;
     console.log("Query Parameters:", { userId, gameName });
-    
+
     let query = `
       SELECT 
           user_id, 
@@ -103,7 +88,6 @@ app.get('/games', async function (req, res) {
       values.push(gameName);
     }
 
-    // Append the WHERE clause if there are conditions
     if (conditions.length > 0) {
       query += ` WHERE ${conditions.join(" AND ")}`;
     }
@@ -114,8 +98,8 @@ app.get('/games', async function (req, res) {
     LIMIT 500;
   `;
 
-  console.log("Generated Query:", query);  // Check the generated SQL query
-  console.log("Values:", values); // Check the values passed to the query
+    console.log("Generated Query:", query); 
+    console.log("Values:", values);
 
     const result = await client.query(query, values);
     if (result.rowCount < 1) {
@@ -180,19 +164,14 @@ app.put('/update-game', async function (req, res) {
 
 //DELETE request that deletes a game
 app.delete('/delete-game', async function (req, res) {
-
   const { user_id, game_name } = req.body;
-  //Removed creating a new client and just connected to the pool
-  //const client = new Client(clientConfig);
   const client = await clientConfig.connect();
-  try {
-    //await client.connect();
 
+  try {
     const query = await client.query(
       'DELETE FROM steam_user_activity WHERE "user_id" = $1 AND "game_name" = $2 RETURNING *',
       [user_id, game_name]
     );
-
 
     if (query.rowCount === 0) {
       res.status(404).send("No record found to delete");
@@ -202,7 +181,6 @@ app.delete('/delete-game', async function (req, res) {
   } catch (error) {
     res.status(500).json({ error: "Failed to delete record", details: error.message });
   }
-  //await client.end();
   await client.release();
 });
 
