@@ -386,9 +386,11 @@ function App() {
 
         </div>
 
+        <pre>{response}</pre>
+
       </footer>
 
-      <pre>{response}</pre>
+      
 
     </div>
   );

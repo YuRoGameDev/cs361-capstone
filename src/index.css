@@ -94,3 +94,7 @@ select{
   width:120px;
   height: 20px;
 }
+
+pre{
+  size: 10px;
+}
