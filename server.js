@@ -17,7 +17,7 @@ app.use((req, res, next) => {
   const allowedOrigins = [`http://localhost:8000`, `http://3.144.76.209:8000`, "http://ec2-3-144-76-209.us-east-2.compute.amazonaws.com:8000"];
 
   if (!origin || !allowedOrigins.some((allowed) => origin.startsWith(allowed))) {
-    return res.redirect("/"); 
+    return res.redirect("/");
   }
 
   next();
@@ -46,7 +46,7 @@ app.get('/games', async function (req, res) {
 
   try {
     const { userId, gameName, limit = 50, offset = 0 } = req.query;
- 
+
 
     console.log("Query Parameters:", { userId, gameName, limit, offset });
 
@@ -83,7 +83,7 @@ app.get('/games', async function (req, res) {
     values.push(limit);
     values.push(offset);
 
-    console.log("Generated Query:", query); 
+    console.log("Generated Query:", query);
     console.log("Values:", values);
 
     const result = await client.query(query, values);
@@ -94,28 +94,28 @@ app.get('/games', async function (req, res) {
       SELECT DISTINCT user_id, game_name, behavior
       FROM steam_user_activity
   `;
-  
-  const countConditions = [];
-  const countValues = [];
-  
-  if (userId) {
-    countConditions.push(`user_id = $${countValues.length + 1}`);
-    countValues.push(userId);
-  }
-  
-  if (gameName) {
-    countConditions.push(`game_name = $${countValues.length + 1}`);
-    countValues.push(gameName);
-  }
-  
-  if (countConditions.length > 0) {
-    countQuery += ` WHERE ${countConditions.join(" AND ")}`;
-  }
-  
-  countQuery += `) AS distinct_combinations`;
-    
+
+    const countConditions = [];
+    const countValues = [];
+
+    if (userId) {
+      countConditions.push(`user_id = $${countValues.length + 1}`);
+      countValues.push(userId);
+    }
+
+    if (gameName) {
+      countConditions.push(`game_name = $${countValues.length + 1}`);
+      countValues.push(gameName);
+    }
+
+    if (countConditions.length > 0) {
+      countQuery += ` WHERE ${countConditions.join(" AND ")}`;
+    }
+
+    countQuery += `) AS distinct_combinations`;
+
     const totalResult = await client.query(countQuery, countValues);
-    
+
     const totalRows = totalResult.rows[0].total;
     console.log(totalRows);
 

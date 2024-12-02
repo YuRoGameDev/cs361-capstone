@@ -3,16 +3,16 @@ import PropTypes from "prop-types";
 
 const GameDisplay = ({ gameResponse, currentPage, totalPages, onPageChange }) => {
 
-    let parsedData = [];
+  let parsedData = [];
   try {
     parsedData = gameResponse ? JSON.parse(gameResponse) : [];
   } catch {
     parsedData = [];
-    }
-    
-    if (!Array.isArray(parsedData)) {
-        return <div>Invalid data format</div>; 
-      }
+  }
+
+  if (!Array.isArray(parsedData)) {
+    return <div>Invalid data format</div>;
+  }
 
   return (
     <div>
@@ -27,8 +27,8 @@ const GameDisplay = ({ gameResponse, currentPage, totalPages, onPageChange }) =>
         {parsedData.length > 0 ? (
           parsedData.map((entry, index) => (
             <div className="table-contents"
-                  key={index}>
-                  
+              key={index}>
+
               <div>{entry.user_id}</div>
               <div>{entry.game_name}</div>
               <div>{entry.behavior}</div>
@@ -58,10 +58,10 @@ const GameDisplay = ({ gameResponse, currentPage, totalPages, onPageChange }) =>
 
 // Prop validation
 GameDisplay.propTypes = {
-  gameResponse: PropTypes.string.isRequired, 
-  currentPage: PropTypes.number.isRequired, 
-  totalPages: PropTypes.number.isRequired, 
-  onPageChange: PropTypes.func.isRequired, 
+  gameResponse: PropTypes.string.isRequired,
+  currentPage: PropTypes.number.isRequired,
+  totalPages: PropTypes.number.isRequired,
+  onPageChange: PropTypes.func.isRequired,
 };
 
 export default GameDisplay;

@@ -4,7 +4,7 @@ import GameDisplay from "./GameDisplay";
 
 function App() {
   const [response, setResponse] = useState("");
- 
+
   //#region Game Get
   const [gameResponse, setGameResponse] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -21,59 +21,44 @@ function App() {
 
   const handlePageChange = (newPage) => {
     setCurrentPage(newPage);
-    callGameApi(newPage); // Fetch data for the new page
+    callGameApi(newPage);
   };
 
   useEffect(() => {
-    callGameApi(currentPage); // Fetch data for the current page when the component mounts or currentPage changes
-}, [currentPage]);
+    callGameApi(currentPage);
+  }, [currentPage]);
 
-//endpoint, method = "GET", body = null
+
   const callGameApi = async (page = 1) => {
-    
+
     const endpoint = "/games";
     const body = {
       userId: formGameData.getId,
       gameName: formGameData.getName,
       limit: 50,
-      offset: (page- 1) * 50,
+      offset: (page - 1) * 50,
     };
-    
-    
-    // const limit = 50;
-    // const offset = (page - 1) * limit;
-    
+
+
     const options = {
       method: "GET",
       headers: { "Content-Type": "application/json" },
     };
 
-    // const filteredBody = Object.fromEntries(
-    //   Object.entries(body).filter(([_, value]) => value.trim() !== "")
-    // );
 
     const filteredBody = Object.fromEntries(
       Object.entries(body).filter(([_, value]) => {
-        // Convert value to a string and trim it to avoid errors
-        return value && String(value).trim() !== ""; 
+        return value && String(value).trim() !== "";
       })
     );
 
-    // const filteredBody = {
-    //   userId: formGameData.id,
-    //   gameName: formGameData.name,
-    //   limit: limit,
-    //   offset: offset,
-    // };
-    
+
     const queryParams = new URLSearchParams(filteredBody).toString();
     const fullEndpoint = queryParams ? `${endpoint}?${queryParams}` : endpoint;
-    //endpoint += queryParams ? `?${queryParams}` : "";
 
     console.log("Request URL:", fullEndpoint);
 
     try {
-      //, options
       const res = await fetch(fullEndpoint, options);
       if (!res.ok) throw new Error(`Error: ${res.statusText}`);
       const data = await res.json();
@@ -227,9 +212,9 @@ function App() {
   return (
     <div>
       {/* Game Get */}
-    
+
       <div style={{ gap: "20px", padding: "20px" }}>
-      <h3>Filter Records</h3>
+        <h3>Filter Records</h3>
         <InputField
           type="number"
           label="User ID"
@@ -245,7 +230,7 @@ function App() {
           onChange={handleGameChange}
         />
 
-<button onClick={() => callGameApi(currentPage)}>
+        <button onClick={() => callGameApi(currentPage)}>
           Get Records
         </button>
 
@@ -253,16 +238,16 @@ function App() {
 
 
       <GameDisplay
-        gameResponse={JSON.stringify(gameResponse)} 
+        gameResponse={JSON.stringify(gameResponse)}
         currentPage={currentPage}
-        totalPages={totalPages} 
-        onPageChange={handlePageChange} 
+        totalPages={totalPages}
+        onPageChange={handlePageChange}
       />
 
       <footer>
         {/* Game Add */}
         <div>
-        <h3>Add Record</h3>
+          <h3>Add Record</h3>
           <InputField
             type="number"
             label="User ID"
@@ -317,7 +302,7 @@ function App() {
 
         {/* Game Update */}
         <div>
-        <h3>Update Record</h3>
+          <h3>Update Record</h3>
           <InputField
             type="number"
             label="User ID"
@@ -332,7 +317,7 @@ function App() {
             onChange={handleUpdateChange}
           />
 
-<div className="dropdown">
+          <div className="dropdown">
             <label htmlFor="dropdownUpdateChange">Purchase Status</label>
             <select id="dropdownUpdateChange" onChange={handleDropdownUpdateChange}>
               <option value="0">Not Purchased</option>
@@ -372,7 +357,7 @@ function App() {
 
         {/* Game Delete */}
         <div>
-        <h3>Delete Record</h3>
+          <h3>Delete Record</h3>
           <InputField
             type="number"
             label="User ID"
@@ -402,7 +387,7 @@ function App() {
         </div>
 
       </footer>
-      
+
       <pre>{response}</pre>
 
     </div>

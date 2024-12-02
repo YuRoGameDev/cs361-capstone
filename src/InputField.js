@@ -12,12 +12,11 @@ const InputField = ({
         let newValue = e.target.value;
 
         if (/[^0-9]/.test(newValue)) {
-            newValue = newValue.replace(/[^0-9]/g, ""); 
+            newValue = newValue.replace(/[^0-9]/g, "");
         }
 
-
         if (newValue && parseInt(newValue, 10) < 0) {
-            newValue = "0"; 
+            newValue = "0";
         }
 
         onChange(e, newValue);
@@ -44,10 +43,10 @@ const InputField = ({
                     type={type}
                     id={id}
                     value={value}
-                    onChange={handleInputChange}  
-                    inputMode={type === "number" ? "numeric" : undefined} 
-                    pattern="[0-9]*"  
-                    min="0"  
+                    onChange={handleInputChange}
+                    inputMode={type === "number" ? "numeric" : undefined}
+                    pattern="[0-9]*"
+                    min="0"
                 />
             )}
         </div>
