@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import InputField from "./InputField";
+import GameDisplay from "./GameDisplay";
 
 function App() {
   const [response, setResponse] = useState("");
@@ -203,7 +204,7 @@ function App() {
         })}>Get Games</button>
       </div>
 
-      <pre>{gameResponse}</pre>
+      <GameDisplay gameResponse={gameResponse}/>
 
       <div style={{ display: "flex", gap: "20px", padding: "20px" }}>
         {/* Game Add */}
