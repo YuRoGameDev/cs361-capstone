@@ -3,12 +3,18 @@ import PropTypes from "prop-types";
 
 const GameDisplay = ({ gameResponse, currentPage, totalPages, onPageChange }) => {
   // Safely parse the JSON or default to an empty array
-  let parsedData = [];
+
+    
+    let parsedData = [];
   try {
     parsedData = gameResponse ? JSON.parse(gameResponse) : []; // Parse if valid
   } catch {
     parsedData = []; // Fallback to empty array if JSON parsing fails
-  }
+    }
+    
+    if (!Array.isArray(parsedData)) {
+        return <div>Invalid data format</div>;  // Fallback for non-array data
+      }
 
   return (
     <div>
