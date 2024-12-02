@@ -116,9 +116,10 @@ app.get('/games', async function (req, res) {
     const totalResult = await client.query(countQuery);
     
     const totalRows = totalResult.rows[0].total;
-
+    console.log(totalRows);
+    
     if (result.rowCount < 1) {
-      res.status(404).send("No Data Found");
+      res.status(200).json({ data: [], total: 0 });
     } else {
       res.json({
         data: result.rows,
