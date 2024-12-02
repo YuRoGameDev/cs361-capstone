@@ -105,19 +105,37 @@ app.get('/games', async function (req, res) {
 
     const result = await client.query(query, values);
 
-    const countQuery = `
-  SELECT COUNT(*) AS total
-  FROM (
-    SELECT DISTINCT user_id, game_name, behavior
-    FROM steam_user_activity
-  ) AS distinct_combinations
-`;
+    let countQuery = `
+    SELECT COUNT(*) AS total
+    FROM (
+      SELECT DISTINCT user_id, game_name, behavior
+      FROM steam_user_activity
+  `;
+  
+  const countConditions = [];
+  const countValues = [];
+  
+  if (userId) {
+    countConditions.push(`user_id = $${countValues.length + 1}`);
+    countValues.push(userId);
+  }
+  
+  if (gameName) {
+    countConditions.push(`game_name = $${countValues.length + 1}`);
+    countValues.push(gameName);
+  }
+  
+  if (countConditions.length > 0) {
+    countQuery += ` WHERE ${countConditions.join(" AND ")}`;
+  }
+  
+  countQuery += `) AS distinct_combinations`;
     
-    const totalResult = await client.query(countQuery);
+    const totalResult = await client.query(countQuery, countValues);
     
     const totalRows = totalResult.rows[0].total;
     console.log(totalRows);
-    
+
     if (result.rowCount < 1) {
       res.status(200).json({ data: [], total: 0 });
     } else {
