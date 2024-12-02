@@ -10,8 +10,8 @@ function App() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [formGameData, setGameData] = useState({
-    id: "",
-    name: "",
+    getId: "",
+    getName: "",
   });
 
   const handleGameChange = (e) => {
@@ -33,8 +33,8 @@ function App() {
     
     const endpoint = "/games";
     const body = {
-      userId: formGameData.id,
-      gameName: formGameData.name,
+      userId: formGameData.getId,
+      gameName: formGameData.getName,
       limit: 50,
       offset: (page- 1) * 50,
     };
@@ -87,10 +87,10 @@ function App() {
 
   //#region  Game Add
   const [formAddData, setAddData] = useState({
-    id: "",
-    name: "",
-    purchaseValue: "0",
-    playValue: "0",
+    addId: "",
+    addName: "",
+    addPurchaseValue: "0",
+    addPlayValue: "0",
   });
 
   const handleAddChange = (e) => {
@@ -101,12 +101,12 @@ function App() {
   const handleDropdownAddChange = (column) => {
     setAddData(prevData => ({
       ...prevData,
-      purchaseValue: column.target.value
+      addPurchaseValue: column.target.value
     }));
   };
 
   const callAddApi = async (endpoint, method = "POST", body = null) => {
-    if (!formAddData.id || !formAddData.name) {
+    if (!formAddData.addId || !formAddData.addName) {
       setResponse("User ID and Name cannot be empty.");
       return;
     }
@@ -122,10 +122,11 @@ function App() {
       if (!res.ok) { throw new Error(`Error: ${res.statusText}`) }
       else {
         const data = await res.text();
-        if (formAddData.purchaseValue === "1") {
-          setResponse(`Added UserID: ${formAddData.id}, GameName: ${formAddData.name}, Purchase Status: Bought, Hours Played: ${formAddData.playValue}`);
+        if (formAddData.addPurchaseValue === "1") {
+          setResponse(`Added UserID: ${formAddData.addId}, GameName: ${formAddData.addName}, 
+            Purchase Status: Bought, Hours Played: ${formAddData.addPlayValue}`);
         } else {
-          setResponse(`Added UserID: ${formAddData.id}, GameName: ${formAddData.name}, Purchase Status: Not Bought`);
+          setResponse(`Added UserID: ${formAddData.addId}, GameName: ${formAddData.addName}, Purchase Status: Not Bought`);
         }
       }
 
@@ -137,8 +138,8 @@ function App() {
 
   //#region  Game Delete
   const [formDeleteData, setDeleteData] = useState({
-    id: "",
-    name: "",
+    deleteId: "",
+    deleteName: "",
   });
 
   const handleDeleteChange = (e) => {
@@ -147,7 +148,7 @@ function App() {
   };
 
   const callDeleteApi = async (endpoint, method = "DELETE", body = null) => {
-    if (!formDeleteData.id || !formDeleteData.name) {
+    if (!formDeleteData.deleteId || !formDeleteData.deleteName) {
       setResponse("User ID and Name cannot be empty.");
       return;
     }
@@ -163,7 +164,7 @@ function App() {
       if (!res.ok) { throw new Error(`Error: ${res.statusText}`) }
       else {
         const data = await res.text();
-        setResponse(data);
+        setResponse(`Deleted Record of UserID: ${formDeleteData.deleteId} and GameName: ${formDeleteData.deleteName}`);
       }
 
     } catch (error) {
@@ -226,70 +227,70 @@ function App() {
   return (
     <div>
       {/* Game Get */}
+    
       <div style={{ gap: "20px", padding: "20px" }}>
+      <h3>Filter Records</h3>
         <InputField
           type="number"
           label="User ID"
-          id="id"
-          value={formGameData.id}
+          id="getId"
+          value={formGameData.getId}
           onChange={handleGameChange}
         />
 
         <InputField
           label="Game Name"
-          id="name"
-          value={formGameData.name}
+          id="getName"
+          value={formGameData.getName}
           onChange={handleGameChange}
         />
 
 <button onClick={() => callGameApi(currentPage)}>
-          Get Games
+          Get Records
         </button>
 
-        {/* <button onClick={() => callGameApi("/games", "GET", {
-          userId: formGameData.id,
-          gameName: formGameData.name,
-        })}>Get Games</button> */}
       </div>
 
-      {/* <GameDisplay gameResponse={gameResponse}/> */}
 
       <GameDisplay
-        gameResponse={JSON.stringify(gameResponse)} // Pass the game data as JSON string
-        currentPage={currentPage} // Pass current page to the display component
-        totalPages={totalPages} // Pass total pages to the display component
-        onPageChange={handlePageChange} // Pass the page change handler to GameDisplay
+        gameResponse={JSON.stringify(gameResponse)} 
+        currentPage={currentPage}
+        totalPages={totalPages} 
+        onPageChange={handlePageChange} 
       />
 
-      <div style={{ display: "flex", gap: "20px", padding: "20px" }}>
+      <footer>
         {/* Game Add */}
         <div>
+        <h3>Add Record</h3>
           <InputField
+            type="number"
             label="User ID"
-            id="id"
-            value={formAddData.id}
+            id="addId"
+            value={formAddData.addId}
             onChange={handleAddChange}
           />
           <InputField
             label="Game Name"
-            id="name"
-            value={formAddData.name}
+            id="addName"
+            value={formAddData.addName}
             onChange={handleAddChange}
           />
 
-          <div style={{ marginBottom: "10px" }}>
-            <label htmlFor="dropdownAddChange" style={{ display: "block" }}>Purchase Status</label>
+          <div className="dropdown">
+            <label htmlFor="dropdownAddChange">Purchase Status</label>
             <select id="dropdownAddChange" onChange={handleDropdownAddChange}>
               <option value="0">Not Purchased</option>
               <option value="1">Purchased</option>
             </select>
           </div>
 
-          {formAddData.purchaseValue === '1' && (
+          {formAddData.addPurchaseValue === '1' && (
             <InputField
+              type="number"
               label="Hours Played"
-              id="playValue"
-              value={formAddData.playValue}
+              id="addPlayValue"
+              value={formAddData.addPlayValue}
               onChange={handleAddChange}
             />
           )}
@@ -297,26 +298,28 @@ function App() {
           <button
             onClick={() => {
               callAddApi("/add-game", "POST", {
-                user_id: formAddData.id,
-                game_name: formAddData.name,
+                user_id: formAddData.addId,
+                game_name: formAddData.addName,
                 behavior: "purchase",
-                value: formAddData.purchaseValue,
+                value: formAddData.addPurchaseValue,
               });
               callAddApi("/add-game", "POST", {
-                user_id: formAddData.id,
-                game_name: formAddData.name,
+                user_id: formAddData.addId,
+                game_name: formAddData.addName,
                 behavior: "play",
-                value: formAddData.playValue,
+                value: formAddData.addPlayValue,
               });
             }}
           >
-            Add Game
+            Add Record
           </button>
         </div>
 
         {/* Game Update */}
         <div>
+        <h3>Update Record</h3>
           <InputField
+            type="number"
             label="User ID"
             id="id"
             value={formUpdateData.id}
@@ -329,8 +332,8 @@ function App() {
             onChange={handleUpdateChange}
           />
 
-          <div style={{ marginBottom: "10px" }}>
-            <label htmlFor="dropdownUpdateChange" style={{ display: "block" }}>Purchase Status</label>
+<div className="dropdown">
+            <label htmlFor="dropdownUpdateChange">Purchase Status</label>
             <select id="dropdownUpdateChange" onChange={handleDropdownUpdateChange}>
               <option value="0">Not Purchased</option>
               <option value="1">Purchased</option>
@@ -339,6 +342,7 @@ function App() {
 
           {formUpdateData.purchaseValue === '1' && (
             <InputField
+              type="number"
               label="Hours Played"
               id="playValue"
               value={formUpdateData.playValue}
@@ -362,40 +366,42 @@ function App() {
               });
             }}
           >
-            Update Game
+            Update Record
           </button>
         </div>
 
         {/* Game Delete */}
         <div>
+        <h3>Delete Record</h3>
           <InputField
+            type="number"
             label="User ID"
-            id="id"
-            value={formDeleteData.id}
+            id="deleteId"
+            value={formDeleteData.deleteId}
             onChange={handleDeleteChange}
           />
 
           <InputField
             label="Game Name"
-            id="name"
-            value={formDeleteData.name}
+            id="deleteName"
+            value={formDeleteData.deleteName}
             onChange={handleDeleteChange}
           />
 
           <button
             onClick={() =>
               callDeleteApi("/delete-game", "DELETE", {
-                user_id: formDeleteData.id,
-                game_name: formDeleteData.name,
+                user_id: formDeleteData.deleteId,
+                game_name: formDeleteData.deleteName,
               })
             }
           >
-            Delete Game
+            Delete Record
           </button>
 
         </div>
 
-      </div>
+      </footer>
       
       <pre>{response}</pre>
 

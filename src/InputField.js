@@ -8,10 +8,25 @@ const InputField = ({
     onChange,
     options = [],
 }) => {
+    const handleInputChange = (e) => {
+        let newValue = e.target.value;
+
+        if (/[^0-9]/.test(newValue)) {
+            newValue = newValue.replace(/[^0-9]/g, ""); 
+        }
+
+
+        if (newValue && parseInt(newValue, 10) < 0) {
+            newValue = "0"; 
+        }
+
+        onChange(e, newValue);
+    };
+
     return (
-        <div style={{ marginBottom: "10px" }}>
+        <div className="input-field">
             {label && (
-                <label htmlFor={id} style={{ display: "block" }}>
+                <label htmlFor={id}>
                     {label}
                 </label>
             )}
@@ -29,13 +44,10 @@ const InputField = ({
                     type={type}
                     id={id}
                     value={value}
-                    onChange={onChange}
-                    inputMode={type === "number" ? "numeric" : undefined} // For mobile keyboards
-                    style={{
-                        MozAppearance: type === "number" ? "textfield" : undefined, // Remove spinner in Firefox
-                        WebkitAppearance: type === "number" ? "textfield" : undefined, // Remove spinner in Chrome/Safari
-                        appearance: type === "number" ? "textfield" : undefined, // General fallback
-                    }}
+                    onChange={handleInputChange}  
+                    inputMode={type === "number" ? "numeric" : undefined} 
+                    pattern="[0-9]*"  
+                    min="0"  
                 />
             )}
         </div>

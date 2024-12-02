@@ -2,38 +2,22 @@ import React from "react";
 import PropTypes from "prop-types";
 
 const GameDisplay = ({ gameResponse, currentPage, totalPages, onPageChange }) => {
-  // Safely parse the JSON or default to an empty array
 
-    
     let parsedData = [];
   try {
-    parsedData = gameResponse ? JSON.parse(gameResponse) : []; // Parse if valid
+    parsedData = gameResponse ? JSON.parse(gameResponse) : [];
   } catch {
-    parsedData = []; // Fallback to empty array if JSON parsing fails
+    parsedData = [];
     }
     
     if (!Array.isArray(parsedData)) {
-        return <div>Invalid data format</div>;  // Fallback for non-array data
+        return <div>Invalid data format</div>; 
       }
 
   return (
     <div>
-      <div
-        style={{
-          border: "1px solid #ccc",
-          maxHeight: "300px",
-          overflowY: "scroll",
-          padding: "10px",
-        }}
-      >
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "1fr 3fr 2fr 1fr",
-            fontWeight: "bold",
-            marginBottom: "10px",
-          }}
-        >
+      <div className="table-container">
+        <div className="table-header" >
           <div>User ID</div>
           <div>Game Name</div>
           <div>Behavior</div>
@@ -42,15 +26,9 @@ const GameDisplay = ({ gameResponse, currentPage, totalPages, onPageChange }) =>
 
         {parsedData.length > 0 ? (
           parsedData.map((entry, index) => (
-            <div
-              key={index}
-              style={{
-                display: "grid",
-                gridTemplateColumns: "1fr 3fr 2fr 1fr",
-                padding: "5px 0",
-                borderBottom: "1px solid #eee",
-              }}
-            >
+            <div className="table-contents"
+                  key={index}>
+                  
               <div>{entry.user_id}</div>
               <div>{entry.game_name}</div>
               <div>{entry.behavior}</div>
@@ -80,10 +58,10 @@ const GameDisplay = ({ gameResponse, currentPage, totalPages, onPageChange }) =>
 
 // Prop validation
 GameDisplay.propTypes = {
-  gameResponse: PropTypes.string.isRequired, // The response should be a JSON string
-  currentPage: PropTypes.number.isRequired, // Current page for pagination
-  totalPages: PropTypes.number.isRequired, // Total number of pages
-  onPageChange: PropTypes.func.isRequired, // Function to handle page change
+  gameResponse: PropTypes.string.isRequired, 
+  currentPage: PropTypes.number.isRequired, 
+  totalPages: PropTypes.number.isRequired, 
+  onPageChange: PropTypes.func.isRequired, 
 };
 
 export default GameDisplay;

@@ -40,23 +40,6 @@ const clientConfig = new Pool({
   }
 });
 
-/* Old Functions not used
-app.get('/hello', function (req, res) {
-  res.send('Hello World!');
-});
-
-app.get('/echo', function (req, res) {
-  const value = req.query['input'];
-  res.set("Content-Type", "text/plain");
-  res.send(value);
-});
-
-app.get('/error', function (req, res) {
-  res.set("Content-Type", "text/plain");
-  res.status(400).send('Error, Bad Request!');
-});
-*/
-
 //GET request that reads the data
 app.get('/games', async function (req, res) {
   const client = await clientConfig.connect();
@@ -143,8 +126,6 @@ app.get('/games', async function (req, res) {
         data: result.rows,
         total: totalRows,
       })
-      // res.set("Content-Type", "application/json");
-      // res.send(result.rows);
     }
   }
   catch (error) {

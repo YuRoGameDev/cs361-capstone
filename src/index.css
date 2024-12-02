@@ -5,9 +5,92 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  background-color: #090a2b;
+  color: #e6fbff;
+
+
 }
+
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+header{
+  padding: 10px;
+  background-color: #04273a;
+  color: #cbdbdf;
+  text-align: center;
+}
+
+footer{
+  display: flex;
+  height: 10vh;
+  bottom: 0;
+  left: 0;
+  gap: 20px;
+  padding: 20px;
+
+}
+
+footer > div {
+  flex: 0;
+}
+
+footer > div:not(:last-child) {
+  height: 150px;
+  padding-bottom: 70px;
+  border-right: 1px solid #ccc;
+  padding-right: 20px;
+}
+
+.input-field{
+  margin-bottom: 10px;
+  appearance: none;
+  -moz-appearance: textfield;
+  -webkit-appearance: none;
+  cursor: auto;
+}
+
+label{
+  display: block;
+  margin-bottom: 3px;
+}
+
+.table-container{
+    border: 1px solid #ccc;
+    max-height: 300px;
+    overflow-y: scroll;
+    padding: 10px;
+}
+
+.table-header{
+  display: grid;
+  grid-template-columns: 1fr 3fr 2fr 1fr;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.table-contents{
+  display: grid;
+  grid-template-columns: 1fr 3fr 2fr 1fr;
+  padding: 5px 0;
+  border-bottom: 1px solid #eee;
+}
+
+button{
+  border-radius: 4px;
+  width: 115px;
+  height: 30px;
+}
+
+.dropdown{
+margin-bottom: 10px;
+}
+
+select{
+  width:120px;
+  height: 20px;
 }
