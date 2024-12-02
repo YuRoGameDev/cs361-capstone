@@ -48,8 +48,15 @@ function App() {
       headers: { "Content-Type": "application/json" },
     };
 
+    // const filteredBody = Object.fromEntries(
+    //   Object.entries(body).filter(([_, value]) => value.trim() !== "")
+    // );
+
     const filteredBody = Object.fromEntries(
-      Object.entries(body).filter(([_, value]) => value.trim() !== "")
+      Object.entries(body).filter(([_, value]) => {
+        // Convert value to a string and trim it to avoid errors
+        return value && String(value).trim() !== ""; 
+      })
     );
 
     // const filteredBody = {
@@ -221,6 +228,7 @@ function App() {
       {/* Game Get */}
       <div style={{ gap: "20px", padding: "20px" }}>
         <InputField
+          type="number"
           label="User ID"
           id="id"
           value={formGameData.id}
