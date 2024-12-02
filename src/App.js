@@ -79,9 +79,9 @@ function App() {
       else {
         const data = await res.text();
         if (formAddData.purchaseValue === "1") {
-          setResponse(`Added UserID: ${formAddData.id}, GameName: ${formAddData.gameName}, Purchase Status: Bought, Hours Played: ${formAddData.playValue}`);
+          setResponse(`Added UserID: ${formAddData.id}, GameName: ${formAddData.name}, Purchase Status: Bought, Hours Played: ${formAddData.playValue}`);
         } else {
-          setResponse(`Added UserID: ${formAddData.id}, GameName: ${formAddData.gameName}, Purchase Status: Not Bought`);
+          setResponse(`Added UserID: ${formAddData.id}, GameName: ${formAddData.name}, Purchase Status: Not Bought`);
         }
       }
 
@@ -166,9 +166,9 @@ function App() {
       else {
         const data = await res.text();
         if (formUpdateData.purchaseValue === "1") {
-          setResponse(`Updated UserID: ${formUpdateData.id}, GameName: ${formUpdateData.gameName}, Purchase Status: Bought, Hours Played: ${formUpdateData.playValue}`);
+          setResponse(`Updated UserID: ${formUpdateData.id}, GameName: ${formUpdateData.name}, Purchase Status: Bought, Hours Played: ${formUpdateData.playValue}`);
         } else {
-          setResponse(`Updated UserID: ${formUpdateData.id}, GameName: ${formUpdateData.gameName}, Purchase Status: Not Bought`);
+          setResponse(`Updated UserID: ${formUpdateData.id}, GameName: ${formUpdateData.name}, Purchase Status: Not Bought`);
         }
       }
 
@@ -244,7 +244,7 @@ function App() {
                 user_id: formAddData.id,
                 game_name: formAddData.name,
                 behavior: "purchase",
-                value: formAddData.purchasevalue,
+                value: formAddData.purchaseValue,
               });
               callAddApi("/add-game", "POST", {
                 user_id: formAddData.id,
@@ -296,7 +296,7 @@ function App() {
                 user_id: formUpdateData.id,
                 game_name: formUpdateData.name,
                 behavior: "purchase",
-                value: formUpdateData.purchasevalue,
+                value: formUpdateData.purchaseValue,
               });
               callUpdateApi("/update-game", "PUT", {
                 user_id: formUpdateData.id,
