@@ -65,7 +65,7 @@ app.get('/games', async function (req, res) {
     const { userId, gameName, limit = 50, offset = 0 } = req.query;
  
 
-    console.log("Query Parameters:", { userId, gameName });
+    console.log("Query Parameters:", { userId, gameName, limit, offset });
 
     let query = `
       SELECT 
@@ -106,9 +106,12 @@ app.get('/games', async function (req, res) {
     const result = await client.query(query, values);
 
     const countQuery = `
-    SELECT COUNT(DISTINCT user_id, game_name, behavior) AS total
+  SELECT COUNT(*) AS total
+  FROM (
+    SELECT DISTINCT user_id, game_name, behavior
     FROM steam_user_activity
-  `;
+  ) AS distinct_combinations
+`;
     
     const totalResult = await client.query(countQuery);
     
