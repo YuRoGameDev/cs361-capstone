@@ -30,36 +30,46 @@ function App() {
 
 //endpoint, method = "GET", body = null
   const callGameApi = async (page = 1) => {
-    const limit = 50;
-    const offset = (page - 1) * limit;
     
-    // const options = {
-    //   method,
-    //   headers: { "Content-Type": "application/json" },
-    // };
-
-    // const filteredBody = Object.fromEntries(
-    //   Object.entries(body).filter(([_, value]) => value.trim() !== "")
-    // );
-
-    const filteredBody = {
+    const endpoint = "/games";
+    const body = {
       userId: formGameData.id,
       gameName: formGameData.name,
-      limit: limit,
-      offset: offset,
+      limit: 50,
+      offset: (page- 1) * 50,
     };
     
+    
+    // const limit = 50;
+    // const offset = (page - 1) * limit;
+    
+    const options = {
+      method,
+      headers: { "Content-Type": "application/json" },
+    };
+
+    const filteredBody = Object.fromEntries(
+      Object.entries(body).filter(([_, value]) => value.trim() !== "")
+    );
+
+    // const filteredBody = {
+    //   userId: formGameData.id,
+    //   gameName: formGameData.name,
+    //   limit: limit,
+    //   offset: offset,
+    // };
+    
     const queryParams = new URLSearchParams(filteredBody).toString();
-    const endpoint = `/games?${queryParams}`; 
+    const fullEndpoint = queryParams ? `${endpoint}?${queryParams}` : endpoint;
     //endpoint += queryParams ? `?${queryParams}` : "";
 
-    console.log("Request URL:", endpoint);
+    console.log("Request URL:", fullEndpoint);
 
     try {
       //, options
-      const res = await fetch(endpoint);
+      const res = await fetch(fullEndpoint, options);
       if (!res.ok) throw new Error(`Error: ${res.statusText}`);
-      const data = await res.text();
+      const data = await res.json();
       setGameResponse(data.data);
       setTotalPages(Math.ceil(data.total / limit));
     } catch (error) {

@@ -2,13 +2,13 @@ import React from "react";
 import PropTypes from "prop-types";
 
 const GameDisplay = ({ gameResponse, currentPage, totalPages, onPageChange }) => {
-  const parsedData = (() => {
-    try {
-      return JSON.parse(gameResponse); // Parse JSON if valid
-    } catch {
-      return []; // Return empty array if parsing fails
-    }
-  })();
+  // Safely parse the JSON or default to an empty array
+  let parsedData = [];
+  try {
+    parsedData = gameResponse ? JSON.parse(gameResponse) : []; // Parse if valid
+  } catch {
+    parsedData = []; // Fallback to empty array if JSON parsing fails
+  }
 
   return (
     <div>
